@@ -3,10 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <title>Standalone viewport repro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="VP repro" />
     <link rel="manifest" href="manifest.webmanifest" />
     <style>
       html,
@@ -53,7 +57,7 @@
   </head>
   <body>
     <div id="app">
-      <h1>Standalone viewport repro</h1>
+      <h1>Standalone viewport repro <small>v3</small></h1>
       <ol>
         <li>Add this page to the Home Screen and open it from there.</li>
         <li>Tap the button: it opens a page outside the app's scope, which sends you back.</li>
