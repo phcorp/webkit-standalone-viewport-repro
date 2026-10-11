@@ -13,6 +13,11 @@
     <meta name="apple-mobile-web-app-title" content="VP repro" />
     <link rel="manifest" href="manifest.webmanifest" />
     <style>
+      /* Without a root as tall as the screen, a Home Screen web app whose
+         content is all position: fixed is not drawn below innerHeight. */
+      html {
+        height: 100vh;
+      }
       html,
       body {
         margin: 0;
@@ -57,13 +62,14 @@
   </head>
   <body>
     <div id="app">
-      <h1>Standalone viewport repro <small>v3</small></h1>
+      <h1>Standalone viewport repro <small>v4</small></h1>
       <ol>
         <li>Add this page to the Home Screen and open it from there.</li>
         <li>Tap the button: it opens a page outside the app's scope, which sends you back.</li>
         <li>
           Expected: as at launch, the white area fills the screen and the green line sits on the
-          bottom edge. Bug: a red band appears under the green line.
+          bottom edge. Bug: a red band appears under the green line and 100vh no longer measures
+          the screen. Rotating the device to landscape and back clears it.
         </li>
       </ol>
       <a class="button" href="../out/">Leave the app's scope and come back</a>
@@ -93,6 +99,7 @@
           'visualViewport.height: ' + (window.visualViewport ? visualViewport.height : 'n/a') + '\n' +
           'documentElement.clientHeight: ' + document.documentElement.clientHeight + '\n' +
           '100vh / svh / dvh / lvh: ' + [unit('100vh'), unit('100svh'), unit('100dvh'), unit('100lvh')].join(' / ') + '\n' +
+          'html height: ' + document.documentElement.getBoundingClientRect().height + '\n' +
           '#app height: ' + document.getElementById('app').getBoundingClientRect().height + '\n' +
           'safe-area-inset-top: ' + style.paddingTop + '\n' +
           'safe-area-inset-bottom: ' + style.paddingBottom + '\n' +
