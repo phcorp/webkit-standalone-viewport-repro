@@ -27,10 +27,17 @@
       This page is outside the web app's scope, like an identity provider's sign-in page. It
       returns to the app in 3 seconds, as an OAuth redirect would.
     </p>
-    <a href="../app/?back=1">Return now</a>
+    <a id="back" href="../app/?back=1">Return now</a>
     <script>
+      var app = new URL('../app/?back=1', location.href).href;
+      // ?cross=1: return through a 302 served by another origin, as an OAuth
+      // provider does.
+      var target = /[?&]cross=1/.test(location.search)
+        ? 'https://httpbin.org/redirect-to?status_code=302&url=' + encodeURIComponent(app)
+        : app;
+      document.getElementById('back').href = target;
       setTimeout(function () {
-        location.replace('../app/?back=1');
+        location.replace(target);
       }, 3000);
     </script>
   </body>

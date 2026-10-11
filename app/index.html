@@ -62,7 +62,7 @@
   </head>
   <body>
     <div id="app">
-      <h1>Standalone viewport repro <small>v4</small></h1>
+      <h1>Standalone viewport repro <small>v5</small></h1>
       <ol>
         <li>Add this page to the Home Screen and open it from there.</li>
         <li>Tap the button: it opens a page outside the app's scope, which sends you back.</li>
@@ -72,7 +72,10 @@
           the screen. Rotating the device to landscape and back clears it.
         </li>
       </ol>
-      <a class="button" href="../out/">Leave the app's scope and come back</a>
+      <a class="button" href="../out/">Leave the app's scope and come back (same site)</a>
+      <a class="button" href="../out/?cross=1">
+        Leave and come back through a redirect on another site
+      </a>
       <pre id="metrics"></pre>
     </div>
     <script>
