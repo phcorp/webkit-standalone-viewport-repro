@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Standalone viewport repro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        /* Shows wherever the page is not painted. */
+        background: #d00;
+        font: 16px/1.5 -apple-system, sans-serif;
+      }
+      #app {
+        position: fixed;
+        inset: 0;
+        box-sizing: border-box;
+        padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+        background: #fff;
+        border-bottom: 8px solid #080;
+        overflow: auto;
+      }
+      pre {
+        padding: 12px;
+        background: #f2f2f2;
+        white-space: pre-wrap;
+      }
+      a.button {
+        display: block;
+        margin: 12px 0;
+        padding: 14px;
+        border-radius: 8px;
+        background: #06c;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bad {
+        color: #d00;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Standalone viewport repro</h1>
+      <ol>
+        <li>Add this page to the Home Screen and open it from there.</li>
+        <li>Tap the button: it opens a page outside the app's scope, which sends you back.</li>
+        <li>
+          Expected: the white area still fills the screen and the green line sits on the bottom
+          edge. Bug: a red band appears under the green line.
+        </li>
+      </ol>
+      <a class="button" href="../out/">Leave the app's scope and come back</a>
+      <pre id="metrics"></pre>
+    </div>
+    <script>
+      var probe = document.createElement('div');
+      probe.style.cssText =
+        'position:fixed;visibility:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0';
+      document.body.appendChild(probe);
+      function report() {
+        var style = getComputedStyle(probe);
+        var short = Math.max(innerWidth, innerHeight) < Math.max(screen.width, screen.height);
+        document.getElementById('metrics').innerHTML =
+          'navigator.standalone: ' + navigator.standalone + '\n' +
+          'display-mode standalone: ' + matchMedia('(display-mode: standalone)').matches + '\n' +
+          'screen: ' + screen.width + ' x ' + screen.height + '\n' +
+          'innerHeight: <span class="' + (short ? 'bad' : '') + '">' + innerHeight + '</span>\n' +
+          'visualViewport.height: ' + (window.visualViewport ? visualViewport.height : 'n/a') + '\n' +
+          'documentElement.clientHeight: ' + document.documentElement.clientHeight + '\n' +
+          'safe-area-inset-top: ' + style.paddingTop + '\n' +
+          'safe-area-inset-bottom: ' + style.paddingBottom + '\n' +
+          'returned from out of scope: ' + /[?&]back=1/.test(location.search) + '\n' +
+          navigator.userAgent;
+      }
+      report();
+      addEventListener('resize', report);
+      addEventListener('pageshow', report);
+      setInterval(report, 1000);
+    </script>
+  </body>
+</html>
