@@ -18,7 +18,12 @@
       }
       #app {
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        /* 100vh, not inset: 0: in a Home Screen web app the layout viewport
+           (innerHeight) can be shorter than the screen while 100vh covers it. */
+        height: 100vh;
         box-sizing: border-box;
         padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
         background: #fff;
@@ -53,8 +58,8 @@
         <li>Add this page to the Home Screen and open it from there.</li>
         <li>Tap the button: it opens a page outside the app's scope, which sends you back.</li>
         <li>
-          Expected: the white area still fills the screen and the green line sits on the bottom
-          edge. Bug: a red band appears under the green line.
+          Expected: as at launch, the white area fills the screen and the green line sits on the
+          bottom edge. Bug: a red band appears under the green line.
         </li>
       </ol>
       <a class="button" href="../out/">Leave the app's scope and come back</a>
@@ -65,6 +70,14 @@
       probe.style.cssText =
         'position:fixed;visibility:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0';
       document.body.appendChild(probe);
+      function unit(value) {
+        var el = document.createElement('div');
+        el.style.cssText = 'position:fixed;visibility:hidden;top:0;height:' + value;
+        document.body.appendChild(el);
+        var height = el.getBoundingClientRect().height;
+        el.remove();
+        return height;
+      }
       function report() {
         var style = getComputedStyle(probe);
         var short = Math.max(innerWidth, innerHeight) < Math.max(screen.width, screen.height);
@@ -75,6 +88,8 @@
           'innerHeight: <span class="' + (short ? 'bad' : '') + '">' + innerHeight + '</span>\n' +
           'visualViewport.height: ' + (window.visualViewport ? visualViewport.height : 'n/a') + '\n' +
           'documentElement.clientHeight: ' + document.documentElement.clientHeight + '\n' +
+          '100vh / svh / dvh / lvh: ' + [unit('100vh'), unit('100svh'), unit('100dvh'), unit('100lvh')].join(' / ') + '\n' +
+          '#app height: ' + document.getElementById('app').getBoundingClientRect().height + '\n' +
           'safe-area-inset-top: ' + style.paddingTop + '\n' +
           'safe-area-inset-bottom: ' + style.paddingBottom + '\n' +
           'returned from out of scope: ' + /[?&]back=1/.test(location.search) + '\n' +
